@@ -1,0 +1,8 @@
+BasedOnStyle: LLVM
+UseTab: Never
+AllowShortIfStatementsOnASingleLine: true
+IndentCaseLabels: false
+AlignConsecutiveAssignments: true
+PointerAlignment: Left
+Standard: Cpp11
+ColumnLimit: 80

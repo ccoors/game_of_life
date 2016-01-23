@@ -1,0 +1,6 @@
+cmake_minimum_required (VERSION 3.1)
+project (Game_of_Life)
+set (CMAKE_CXX_STANDARD 14)
+add_executable (gol main.cpp ui.cpp commands.cpp game_of_life.cpp)
+target_link_libraries (gol pthread)
+install (TARGETS gol DESTINATION bin)

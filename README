@@ -1,0 +1,7 @@
+A simple Game of Life implementation in C++14 v0.1
+
+Build instructions:
+mkdir build
+cd build
+cmake ..
+make
