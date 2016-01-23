@@ -1,7 +1,7 @@
 cmake_minimum_required (VERSION 3.1)
 project (Game_of_Life)
 set (CMAKE_CXX_STANDARD 14)
-add_executable (gol main.cpp ui.cpp commands.cpp game_of_life.cpp import.cpp)
+add_executable (gol src/main.cpp src/ui.cpp src/commands.cpp src/game_of_life.cpp src/import.cpp)
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wextra")
 target_link_libraries (gol pthread)
 install (TARGETS gol DESTINATION bin)
