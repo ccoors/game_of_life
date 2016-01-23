@@ -31,14 +31,18 @@ int Game_of_life::size(const int new_size) {
 }
 
 bool Game_of_life::cell(const int x, const int y, const bool value) {
-  if (!valid_coords(x, y)) return false;
+  if (!valid_coords(x, y)) {
+    return false;
+  }
 
   _current_grid[y][x] = value;
   return true;
 }
 
 bool Game_of_life::cell(const int x, const int y) const {
-  if (!valid_coords(x, y)) return false;
+  if (!valid_coords(x, y)) {
+    return false;
+  }
 
   return _current_grid[y][x];
 }
@@ -69,11 +73,13 @@ void Game_of_life::clear() {
 }
 
 int Game_of_life::shift_coord(int i) const {
-  while (i < 0)
+  while (i < 0) {
     i += _size;
+  }
 
-  while (i >= _size)
+  while (i >= _size) {
     i -= _size;
+  }
 
   return i;
 }
@@ -98,10 +104,11 @@ void Game_of_life::calculate_line(const int line, grid &output, const grid &old,
   for (int x = 0; x < _size; x++) {
     int n = alive_neighbors(x, line, old);
     bool new_state{false};
-    if (n == 2)
+    if (n == 2) {
       new_state = old[line][x];
-    else if (n == 3)
+    } else if (n == 3) {
       new_state = true;
+    }
 
     if (thread_safe) {
       std::lock_guard<std::mutex> lock{_grid_lock};
@@ -130,7 +137,9 @@ void Game_of_life::step() {
         running.emplace_back(thread_helper, std::ref(*this), current_line,
                              std::ref(_current_grid), std::ref(_old_grid));
         current_line++;
-        if (current_line >= _size) break;
+        if (current_line >= _size) {
+          break;
+        }
       }
 
       for (auto &t : running) {
@@ -148,8 +157,9 @@ bool Game_of_life::load_pattern(const std::string filename, const int x,
     grid backup = _current_grid;
     bool ok{false};
 
-    if (filename.substr(filename.find_last_of(".") + 1) == "rle")
+    if (filename.substr(filename.find_last_of(".") + 1) == "rle") {
       ok = import::import_rle(in, *this, x, y);
+    }
 
     if (!ok) {
       _current_grid = backup;
@@ -157,9 +167,9 @@ bool Game_of_life::load_pattern(const std::string filename, const int x,
     }
 
     return ok;
-  } else {
-    std::cout << "Could not open file.\n";
   }
+  std::cout << "Could not open file.\n";
+
   return false;
 }
 
@@ -175,4 +185,4 @@ std::ostream &operator<<(std::ostream &os, const Game_of_life &g) {
   os << "+" << ui::repeat(g._size, "-") << "+\n";
   return os;
 }
-}
+} // namespace gol

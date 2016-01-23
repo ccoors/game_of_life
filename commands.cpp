@@ -5,28 +5,31 @@ namespace commands {
 std::random_device random_device;
 std::default_random_engine random_engine{random_device()};
 
+// clang-format off
 std::vector<command_structure> commands = {
-    {"?", "?", "?", &help, "Print this help"},
-    {"print", "(p)rint", "p", &print_grid, "Print current grid"},
-    {"clear", "(c)lear", "c", &clear_grid, "Clear the grid"},
-    {"resize", "resi(z)e n", "z", &resize_grid,
-     "Set grid size to n x n and clear"},
-    {"set", "(s)et x y", "s", &set_cell, "Set cell at x y alive"},
-    {"unset", "(u)nset x y", "u", &unset_cell, "Set cell at x y dead"},
-    {"fill", "(f)ill n", "f", &fill_grid, "Set up to n cells alive"},
-    {"threads", "(t)hreads n", "t", &set_threads, "Set the amount of threads"},
-    {"glider", "(g)lider x y", "g", &create_glider, "Place a glider at x y"},
-    {"load", "(l)oad file x y", "l", &load_pattern,
-     "Load pattern from file to x y"},
-    {"run", "(r)un n", "r", &run, "Run n iterations"},
-    {"step", "st(e)p", "e", &step, "Run 1 iteration"},
-    {"exit", "exit", "", &pexit, "Exit"}};
+    {"?",       "?",               "?", &help,          "Print this help"},
+    {"print",   "(p)rint",         "p", &print_grid,    "Print current grid"},
+    {"clear",   "(c)lear",         "c", &clear_grid,    "Clear the grid"},
+    {"resize",  "resi(z)e n",      "z", &resize_grid,   "Set grid size to n x n and clear"},
+    {"set",     "(s)et x y",       "s", &set_cell,      "Set cell at x y alive"},
+    {"unset",   "(u)nset x y",     "u", &unset_cell,    "Set cell at x y dead"},
+    {"fill",    "(f)ill n",        "f", &fill_grid,     "Set up to n cells alive"},
+    {"threads", "(t)hreads n",     "t", &set_threads,   "Set the amount of threads"},
+    {"glider",  "(g)lider x y",    "g", &create_glider, "Place a glider at x y"},
+    {"load",    "(l)oad file x y", "l", &load_pattern,  "Load pattern from file to x y"},
+    {"run",     "(r)un n",         "r", &run,           "Run n iterations"},
+    {"step",    "st(e)p",          "e", &step,          "Run 1 iteration"},
+    {"exit",    "exit",            "",  &pexit,         "Exit"}
+};
+// clang-format on
 
 constexpr int max_command_width{16};
 
 bool command(std::string command, gol::Game_of_life &g) {
   for (auto c : commands) {
-    if (command == c.name || command == c.shortcut) return c.function(g);
+    if (command == c.name || command == c.shortcut) {
+      return c.function(g);
+    }
   }
 
   std::cout << "Unknown command.\n";
@@ -52,10 +55,11 @@ bool help(gol::Game_of_life &g) {
   // std::cout << " * Plaintext (.cells)\n"; // TODO
   std::cout << "Please make sure the grid is large enough before loading.\n";
   int hardware_threads = std::thread::hardware_concurrency();
-  if (hardware_threads > 1)
+  if (hardware_threads > 1) {
     std::cout << "\nUse as many threads as possible (up to " << gol::max_threads
               << ")\nif you have more than one CPU core.\nYour CPU supports "
               << hardware_threads << " hardware threads.\n";
+  }
 
   std::cout << "\n";
   return true;
@@ -152,8 +156,9 @@ bool load_pattern(gol::Game_of_life &g) {
 
   if (std::cin >> filename && ui::input_int(x, true) &&
       ui::input_int(y, true)) {
-    if (g.load_pattern(filename, x, y)) std::cout << "OK\n";
-
+    if (g.load_pattern(filename, x, y)) {
+      std::cout << "OK\n";
+    }
   } else {
     std::cin.clear();
     std::cin.ignore();
@@ -183,4 +188,4 @@ bool step(gol::Game_of_life &g) {
 }
 
 bool pexit(gol::Game_of_life &g) { return false; }
-}
+} // namespace commands

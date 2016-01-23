@@ -42,52 +42,48 @@ bool import_rle(std::ifstream &i, gol::Game_of_life &g, const int x,
       } else {
         if (!data) {
           return false;
-        } else {
-          while (stringstr.good()) {
-            int count{0};
-            char c{0};
-            // std::cout << "c ";
-            if (stringstr >> count && stringstr.get(c)) {
-              for (int lx = 0; lx < count; lx++) {
-                if (c == '$') {
-                  local_x = 0;
-                  local_y++;
-                  continue;
-                }
-                g.cell_shift(x + local_x, y + local_y,
-                             (c == 'o' ? true : false));
+        }
+        while (stringstr.good()) {
+          int count{0};
+          char c{0};
+          if (stringstr >> count && stringstr.get(c)) {
+            for (int lx = 0; lx < count; lx++) {
+              if (c == '$') {
+                local_x = 0;
+                local_y++;
+                continue;
+              }
+              g.cell_shift(x + local_x, y + local_y, (c == 'o'));
+              local_x++;
+              if (local_x > width) {
+                local_x = 0;
+                local_y++;
+              }
+            }
+          } else {
+            stringstr.clear();
+            if (stringstr.get(c)) {
+              if (c == 'b' || c == 'o') {
+                g.cell_shift(x + local_x, y + local_y, (c == 'o'));
                 local_x++;
                 if (local_x > width) {
                   local_x = 0;
                   local_y++;
                 }
+              } else if (c == '$') {
+                local_x = 0;
+                local_y++;
+              } else if (c == '!') {
+                return true;
               }
             } else {
               stringstr.clear();
-              if (stringstr.get(c)) {
-                if (c == 'b' || c == 'o') {
-                  g.cell_shift(x + local_x, y + local_y,
-                               (c == 'o' ? true : false));
-                  local_x++;
-                  if (local_x > width) {
-                    local_x = 0;
-                    local_y++;
-                  }
-                } else if (c == '$') {
-                  local_x = 0;
-                  local_y++;
-                } else if (c == '!') {
-                  return true;
-                }
-              } else {
-                stringstr.clear();
-                std::string remaining;
-                getline(stringstr, remaining);
-                if (remaining != "") {
-                  std::cout << "Unknown char in file. Remaining: " << remaining
-                            << "\n";
-                  return false;
-                }
+              std::string remaining;
+              getline(stringstr, remaining);
+              if (remaining != "") {
+                std::cout << "Unknown char in file. Remaining: " << remaining
+                          << "\n";
+                return false;
               }
             }
           }
@@ -97,4 +93,4 @@ bool import_rle(std::ifstream &i, gol::Game_of_life &g, const int x,
   }
   return true;
 }
-}
+} // namespace import

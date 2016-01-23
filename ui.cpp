@@ -17,21 +17,25 @@ std::string repeat(const int count, const std::string s) {
 bool command_prompt(gol::Game_of_life &g) {
   std::cout << "Command (? for help): ";
   std::string command;
-  bool ok = (std::cin >> command) ? true : false;
+  bool ok = static_cast<bool>((std::cin >> command));
+  if (!ok) {
+    std::cout << "exit";
+  }
   std::cout << "\n";
-  if (!ok) return false;
+  if (!ok) {
+    return false;
+  }
 
   return commands::command(command, g);
 }
 
 bool input_int(int &i, bool unsign) {
   if (std::cin >> i) {
-    if (unsign && i < 1) return false;
-    return true;
-  } else {
-    std::cin.clear();
-    std::cin.ignore();
-    return false;
+    return !(unsign && i < 1);
+    true;
   }
+  std::cin.clear();
+  std::cin.ignore();
+  return false;
 }
-}
+} // namespace ui
