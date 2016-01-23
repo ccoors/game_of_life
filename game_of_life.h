@@ -22,15 +22,15 @@ public:
   bool valid_coords(const int x, const int y) const;
   bool valid_coords(const int x) const;
   int size() const;
-  void size(const int new_size);
+  int size(const int new_size);
   void clear();
   bool cell(const int x, const int y, const bool value);
-  bool cell(const int x, const int y);
-  void threads(const int new_threads);
-  int threads();
+  bool cell(const int x, const int y) const;
+  int threads(const int new_threads);
+  int threads() const;
   void step();
 
-  int shift_coord(int i);
+  int shift_coord(int i) const;
 
 private:
   Game_of_life(const Game_of_life& g);

@@ -23,9 +23,10 @@ bool Game_of_life::valid_coords(const int x) const {
 
 int Game_of_life::size() const { return _size; }
 
-void Game_of_life::size(const int new_size) {
+int Game_of_life::size(const int new_size) {
   _size = std::max(gol::min_grid_size, new_size);
   clear();
+  return _size;
 }
 
 bool Game_of_life::cell(const int x, const int y, const bool value) {
@@ -35,17 +36,18 @@ bool Game_of_life::cell(const int x, const int y, const bool value) {
   return true;
 }
 
-bool Game_of_life::cell(const int x, const int y) {
+bool Game_of_life::cell(const int x, const int y) const {
   if (!valid_coords(x, y)) return false;
 
   return _current_grid[y][x];
 }
 
-void Game_of_life::threads(const int new_threads) {
+int Game_of_life::threads(const int new_threads) {
   _threads = std::max(1, std::min(max_threads, new_threads));
+  return _threads;
 }
 
-int Game_of_life::threads() { return _threads; }
+int Game_of_life::threads() const { return _threads; }
 
 void Game_of_life::clear() {
   _current_grid.clear();
@@ -56,7 +58,7 @@ void Game_of_life::clear() {
   }
 }
 
-int Game_of_life::shift_coord(int i) {
+int Game_of_life::shift_coord(int i) const {
   while (i < 0)
     i += _size;
 
