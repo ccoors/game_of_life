@@ -1,0 +1,32 @@
+# Maintainer: Christian F. Coors <ccoors@uni-bremen.de>
+
+_pkgname=game_of_life
+pkgname=$_pkgname-git
+pkgver=v0.1
+pkgrel=1
+pkgdesc="A simple Game of Life implementation"
+arch=('i686' 'x86_64')
+url="https://github.com/ccoors/game_of_life"
+license=('MIT')
+depends=('')
+makedepends=('git' 'cmake')
+conflicts=("$_pkgname")
+provides=("$_pkgname")
+source=("${_pkgname}::git+https://github.com/ccoors/game_of_life.git")
+md5sums=('SKIP')
+
+pkgver() {
+  cd "$srcdir/$_pkgname"
+  git describe --long | sed -E 's/([^-]*-g)/r\1/;s/-/./g'
+}
+
+build() {
+  cd "$srcdir/$_pkgname"
+  cmake -DCMAKE_INSTALL_PREFIX=/usr .
+  make
+}
+
+package() {
+  cd "$srcdir/$_pkgname"
+  make PREFIX=/usr DESTDIR="$pkgdir" install
+}
