@@ -32,7 +32,6 @@ bool command_prompt(gol::Game_of_life &g) {
 bool input_int(int &i, bool unsign) {
   if (std::cin >> i) {
     return !(unsign && i < 1);
-    true;
   }
   std::cin.clear();
   std::cin.ignore();
