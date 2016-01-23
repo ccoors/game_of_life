@@ -16,13 +16,15 @@ std::vector<command_structure> commands = {
     {"fill", "(f)ill n", "f", &fill_grid, "Set up to n cells alive"},
     {"threads", "(t)hreads n", "t", &set_threads, "Set the amount of threads"},
     {"glider", "(g)lider x y", "g", &create_glider, "Place a glider at x y"},
+    {"load", "(l)oad file x y", "l", &load_pattern,
+     "Load pattern from file to x y"},
     {"run", "(r)un n", "r", &run, "Run n iterations"},
     {"step", "st(e)p", "e", &step, "Run 1 iteration"},
     {"exit", "exit", "", &pexit, "Exit"}};
 
-constexpr int max_command_width{14};
+constexpr int max_command_width{16};
 
-bool command(std::string command, gol::Game_of_life& g) {
+bool command(std::string command, gol::Game_of_life &g) {
   for (auto c : commands) {
     if (command == c.name || command == c.shortcut) return c.function(g);
   }
@@ -31,12 +33,12 @@ bool command(std::string command, gol::Game_of_life& g) {
   return true;
 }
 
-void print_command_name(const std::string& name) {
+void print_command_name(const std::string &name) {
   std::cout.width(max_command_width);
   std::cout << name;
 }
 
-bool help(gol::Game_of_life& g) {
+bool help(gol::Game_of_life &g) {
   std::cout << " === Help ===\n";
   for (auto c : commands) {
     print_command_name(c.help);
@@ -44,9 +46,14 @@ bool help(gol::Game_of_life& g) {
   }
 
   std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n";
+  std::cout << "\nCurrent the following file formats are supported:\n";
+  std::cout << " * RLE (.rle)\n";
+  // std::cout << " * Macrocell (.mc)\n"; // TODO
+  // std::cout << " * Plaintext (.cells)\n"; // TODO
+  std::cout << "Please make sure the grid is large enough before loading.\n";
   int hardware_threads = std::thread::hardware_concurrency();
   if (hardware_threads > 1)
-    std::cout << "Use as many threads as possible (up to " << gol::max_threads
+    std::cout << "\nUse as many threads as possible (up to " << gol::max_threads
               << ")\nif you have more than one CPU core.\nYour CPU supports "
               << hardware_threads << " hardware threads.\n";
 
@@ -54,17 +61,17 @@ bool help(gol::Game_of_life& g) {
   return true;
 }
 
-bool print_grid(gol::Game_of_life& g) {
+bool print_grid(gol::Game_of_life &g) {
   std::cout << g;
   return true;
 }
 
-bool clear_grid(gol::Game_of_life& g) {
+bool clear_grid(gol::Game_of_life &g) {
   g.clear();
   return true;
 }
 
-bool resize_grid(gol::Game_of_life& g) {
+bool resize_grid(gol::Game_of_life &g) {
   int size;
   if (ui::input_int(size, true)) {
     g.size(size);
@@ -75,7 +82,7 @@ bool resize_grid(gol::Game_of_life& g) {
   return true;
 }
 
-void input_set_cell(gol::Game_of_life& g, bool value) {
+void input_set_cell(gol::Game_of_life &g, bool value) {
   int x, y;
   if (ui::input_int(x) && ui::input_int(y)) {
     if (!g.cell(x, y, value)) {
@@ -86,19 +93,19 @@ void input_set_cell(gol::Game_of_life& g, bool value) {
   }
 }
 
-bool set_cell(gol::Game_of_life& g) {
+bool set_cell(gol::Game_of_life &g) {
   input_set_cell(g, true);
 
   return true;
 }
 
-bool unset_cell(gol::Game_of_life& g) {
+bool unset_cell(gol::Game_of_life &g) {
   input_set_cell(g, false);
 
   return true;
 }
 
-bool fill_grid(gol::Game_of_life& g) {
+bool fill_grid(gol::Game_of_life &g) {
   int n;
   if (ui::input_int(n, true)) {
     std::uniform_int_distribution<int> grid_distribution(0, g.size() - 1);
@@ -114,7 +121,7 @@ bool fill_grid(gol::Game_of_life& g) {
   return true;
 }
 
-bool set_threads(gol::Game_of_life& g) {
+bool set_threads(gol::Game_of_life &g) {
   int n;
   if (ui::input_int(n, true)) {
     g.threads(n);
@@ -125,7 +132,7 @@ bool set_threads(gol::Game_of_life& g) {
   return true;
 }
 
-bool create_glider(gol::Game_of_life& g) {
+bool create_glider(gol::Game_of_life &g) {
   int x, y;
   if (ui::input_int(x) && ui::input_int(y)) {
     g.cell(g.shift_coord(x + 1), g.shift_coord(y), true);
@@ -139,7 +146,23 @@ bool create_glider(gol::Game_of_life& g) {
   return true;
 }
 
-bool run(gol::Game_of_life& g) {
+bool load_pattern(gol::Game_of_life &g) {
+  std::string filename{""};
+  int x, y;
+
+  if (std::cin >> filename && ui::input_int(x, true) &&
+      ui::input_int(y, true)) {
+    if (g.load_pattern(filename, x, y)) std::cout << "OK\n";
+
+  } else {
+    std::cin.clear();
+    std::cin.ignore();
+    std::cout << "Invalid parameters.\n";
+  }
+  return true;
+}
+
+bool run(gol::Game_of_life &g) {
   int n;
   if (ui::input_int(n, true)) {
     for (int i = 0; i < n; i++) {
@@ -153,11 +176,11 @@ bool run(gol::Game_of_life& g) {
   return true;
 }
 
-bool step(gol::Game_of_life& g) {
+bool step(gol::Game_of_life &g) {
   g.step();
   std::cout << g << std::endl;
   return true;
 }
 
-bool pexit(gol::Game_of_life& g) { return false; }
+bool pexit(gol::Game_of_life &g) { return false; }
 }

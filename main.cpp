@@ -5,7 +5,7 @@
 int main() {
   std::cout << "CONVAYS GAME OF LIFE\n\n";
 
-  gol::Game_of_life g{10};
+  gol::Game_of_life g{20};
   std::cout << g;
 
   while (ui::command_prompt(g)) {

@@ -26,21 +26,25 @@ public:
   void clear();
   bool cell(const int x, const int y, const bool value);
   bool cell(const int x, const int y) const;
+  bool cell_shift(const int x, const int y, const bool value);
+  bool cell_shift(const int x, const int y) const;
   int threads(const int new_threads);
   int threads() const;
   void step();
 
+  bool load_pattern(const std::string filename, const int x, const int y);
+
   int shift_coord(int i) const;
 
 private:
-  Game_of_life(const Game_of_life& g);
-  int alive_neighbors(const int x, const int y, const grid& grid);
-  void calculate_line(const int line, grid& output, const grid& old,
+  Game_of_life(const Game_of_life &g);
+  int alive_neighbors(const int x, const int y, const grid &grid);
+  void calculate_line(const int line, grid &output, const grid &old,
                       const bool thread_safe);
 
-  friend std::ostream& operator<<(std::ostream& os, const Game_of_life& g);
-  friend void thread_helper(Game_of_life& g, int line, grid& output,
-                            const grid& old);
+  friend std::ostream &operator<<(std::ostream &os, const Game_of_life &g);
+  friend void thread_helper(Game_of_life &g, int line, grid &output,
+                            const grid &old);
 
   int _size, _threads;
   std::mutex _grid_lock;

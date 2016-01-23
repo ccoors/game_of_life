@@ -3,6 +3,6 @@ UseTab: Never
 AllowShortIfStatementsOnASingleLine: true
 IndentCaseLabels: false
 AlignConsecutiveAssignments: true
-PointerAlignment: Left
+PointerAlignment: Right
 Standard: Cpp11
 ColumnLimit: 80

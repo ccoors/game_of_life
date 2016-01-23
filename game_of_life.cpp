@@ -1,6 +1,7 @@
 #include "game_of_life.h"
 
 #include "ui.h"
+#include "import.h"
 
 namespace gol {
 
@@ -42,6 +43,15 @@ bool Game_of_life::cell(const int x, const int y) const {
   return _current_grid[y][x];
 }
 
+bool Game_of_life::cell_shift(const int x, const int y, const bool value) {
+  _current_grid[shift_coord(y)][shift_coord(x)] = value;
+  return true;
+}
+
+bool Game_of_life::cell_shift(const int x, const int y) const {
+  return _current_grid[shift_coord(y)][shift_coord(x)];
+}
+
 int Game_of_life::threads(const int new_threads) {
   _threads = std::max(1, std::min(max_threads, new_threads));
   return _threads;
@@ -68,7 +78,7 @@ int Game_of_life::shift_coord(int i) const {
   return i;
 }
 
-int Game_of_life::alive_neighbors(const int x, const int y, const grid& grid) {
+int Game_of_life::alive_neighbors(const int x, const int y, const grid &grid) {
   int n{0};
   for (int delta_y = -1; delta_y < 2; delta_y++) {
     for (int delta_x = -1; delta_x < 2; delta_x++) {
@@ -83,7 +93,7 @@ int Game_of_life::alive_neighbors(const int x, const int y, const grid& grid) {
   return n;
 }
 
-void Game_of_life::calculate_line(const int line, grid& output, const grid& old,
+void Game_of_life::calculate_line(const int line, grid &output, const grid &old,
                                   const bool thread_safe) {
   for (int x = 0; x < _size; x++) {
     int n = alive_neighbors(x, line, old);
@@ -102,7 +112,7 @@ void Game_of_life::calculate_line(const int line, grid& output, const grid& old,
   }
 }
 
-void thread_helper(Game_of_life& g, int line, grid& output, const grid& old) {
+void thread_helper(Game_of_life &g, int line, grid &output, const grid &old) {
   g.calculate_line(line, output, old, true);
 }
 
@@ -123,7 +133,7 @@ void Game_of_life::step() {
         if (current_line >= _size) break;
       }
 
-      for (auto& t : running) {
+      for (auto &t : running) {
         t.join();
       }
       running.clear();
@@ -131,7 +141,29 @@ void Game_of_life::step() {
   }
 }
 
-std::ostream& operator<<(std::ostream& os, const Game_of_life& g) {
+bool Game_of_life::load_pattern(const std::string filename, const int x,
+                                const int y) {
+  std::ifstream in{filename, std::ifstream::in};
+  if (in.is_open()) {
+    grid backup = _current_grid;
+    bool ok{false};
+
+    if (filename.substr(filename.find_last_of(".") + 1) == "rle")
+      ok = import::import_rle(in, *this, x, y);
+
+    if (!ok) {
+      _current_grid = backup;
+      std::cout << "File could not be interpreted.\n";
+    }
+
+    return ok;
+  } else {
+    std::cout << "Could not open file.\n";
+  }
+  return false;
+}
+
+std::ostream &operator<<(std::ostream &os, const Game_of_life &g) {
   os << "+" << ui::repeat(g._size, "-") << "+\n";
   for (auto y : g._current_grid) {
     os << "|";

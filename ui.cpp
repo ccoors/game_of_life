@@ -14,7 +14,7 @@ std::string repeat(const int count, const std::string s) {
   return ret;
 }
 
-bool command_prompt(gol::Game_of_life& g) {
+bool command_prompt(gol::Game_of_life &g) {
   std::cout << "Command (? for help): ";
   std::string command;
   bool ok = (std::cin >> command) ? true : false;
@@ -24,7 +24,7 @@ bool command_prompt(gol::Game_of_life& g) {
   return commands::command(command, g);
 }
 
-bool input_int(int& i, bool unsign) {
+bool input_int(int &i, bool unsign) {
   if (std::cin >> i) {
     if (unsign && i < 1) return false;
     return true;
