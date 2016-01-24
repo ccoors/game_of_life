@@ -17,7 +17,7 @@ This is a simple Game of Life implementation in C++14.
 
 ## Requirements
 ### Build
-* CMake
+* CMake (3.1 or later)
 * C++14 compiler (g++ 5.3.0, clang++ 3.7.1 tested)
 
 ## Build instructions
