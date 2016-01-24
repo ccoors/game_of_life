@@ -15,8 +15,24 @@ This is a simple Game of Life implementation in C++14.
 * Support for other file formats
 * Saving
 
+## Requirements
+### Build
+* CMake
+* C++14 compiler (g++ 5.3.0, clang++ 3.7.1 tested)
+
 ## Build instructions
+### Generic
     mkdir build
     cd build
     cmake ..
     make
+
+### Arch Linux
+    cd arch-pkgbuild
+    makepkg
+    sudo pacman -U game_of_life-git-XXX.pkg.tar.xz
+Replace XXX with the actual version number and architecture.
+
+### Linux crosscompile for Windows
+    cd tools
+    ./build_windows_static_x{86,64}.sh
