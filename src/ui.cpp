@@ -29,9 +29,12 @@ bool command_prompt(gol::Game_of_life &g) {
   return commands::command(command, g);
 }
 
-bool input_int(int &i, bool unsign) {
+bool input_int(int &i, bool unsign, bool allow_zero) {
   if (std::cin >> i) {
-    return !(unsign && i < 1);
+    if (allow_zero)
+      return !(i < 0);
+    else
+      return !(unsign && i < 1);
   }
   std::cin.clear();
   std::cin.ignore();

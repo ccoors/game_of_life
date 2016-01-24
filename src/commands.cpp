@@ -77,7 +77,7 @@ bool clear_grid(gol::Game_of_life &g) {
 
 bool resize_grid(gol::Game_of_life &g) {
   int size;
-  if (ui::input_int(size, true)) {
+  if (ui::input_int(size, true, false)) {
     g.size(size);
     std::cout << "New grid size is " << g.size() << ".\n";
   } else {
@@ -88,7 +88,7 @@ bool resize_grid(gol::Game_of_life &g) {
 
 void input_set_cell(gol::Game_of_life &g, bool value) {
   int x, y;
-  if (ui::input_int(x) && ui::input_int(y)) {
+  if (ui::input_int(x, true, true) && ui::input_int(y, true, true)) {
     if (!g.cell(x, y, value)) {
       std::cout << "Invalid coordinates.\n";
     }
@@ -138,7 +138,7 @@ bool set_threads(gol::Game_of_life &g) {
 
 bool create_glider(gol::Game_of_life &g) {
   int x, y;
-  if (ui::input_int(x) && ui::input_int(y)) {
+  if (ui::input_int(x, false, true) && ui::input_int(y, false, true)) {
     g.cell(g.shift_coord(x + 1), g.shift_coord(y), true);
     g.cell(g.shift_coord(x + 2), g.shift_coord(y + 1), true);
     g.cell(g.shift_coord(x + 2), g.shift_coord(y + 2), true);
@@ -154,8 +154,8 @@ bool load_pattern(gol::Game_of_life &g) {
   std::string filename{""};
   int x, y;
 
-  if (std::cin >> filename && ui::input_int(x, true) &&
-      ui::input_int(y, true)) {
+  if (std::cin >> filename && ui::input_int(x, true, true) &&
+      ui::input_int(y, true, true)) {
     if (g.load_pattern(filename, x, y)) {
       std::cout << "OK\n";
     }
