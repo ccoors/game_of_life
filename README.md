@@ -7,12 +7,16 @@ This is a simple Game of Life implementation in C++14.
 * Square grid
 * Standard 23/3 rule
 * Multithreaded (up to 32 threads)
-* Supports loading RLE files
+  * Only useful for large grids (> 100 x 100)
+* Supported loading file formats:
+  * Run Length Encoded (.rle)
+  * Plaintext (.cells)
+  * Life 1.06 (.lif or .life) files
 
 ### Planned features
 * Non-square grid
 * Other rules
-* Support for other file formats
+* Support for loading Life 1.05 files
 * Saving
 
 ## Requirements

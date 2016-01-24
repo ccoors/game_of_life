@@ -7,8 +7,12 @@
 
 namespace import {
 
-bool import_rle(std::ifstream &i, gol::Game_of_life &g, const int x,
+bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
                 const int y);
+bool import_cells(std::istream &i, gol::Game_of_life &g, const int x,
+                  const int y);
+bool import_life(std::istream &i, gol::Game_of_life &g, const int x,
+                 const int y);
 }
 
 #endif

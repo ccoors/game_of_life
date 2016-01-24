@@ -22,7 +22,7 @@ bool next_cell(int &x, int &y, int &width, int &height) {
   return true;
 }
 
-bool import_rle(std::ifstream &i, gol::Game_of_life &g, const int x,
+bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
                 const int y) {
   std::string line, xs, ys, equals[2], comma;
   std::stringstream stringstr;
@@ -81,6 +81,103 @@ bool import_rle(std::ifstream &i, gol::Game_of_life &g, const int x,
       data   = true;
     }
   }
+  return true;
+}
+
+bool import_cells(std::istream &i, gol::Game_of_life &g, const int x,
+                  const int y) {
+  std::string line;
+  std::stringstream stringstr;
+  int local_x{0}, local_y{0};
+  char c;
+
+  while (i.good()) {
+    std::getline(i, line);
+
+    if (!line.length() || trim(line) == "") {
+      local_y++;
+      continue;
+    }
+
+    if (line[0] == '!') {
+      continue;
+    }
+
+    stringstr.clear();
+    stringstr.str(line);
+    while (stringstr.good()) {
+      stringstr.get(c);
+      if (!stringstr.good()) {
+        local_x = 0;
+        local_y++;
+        continue;
+      }
+
+      switch (c) {
+      case '.':
+        g.cell_shift(x + local_x, y + local_y, false);
+        break;
+      case 'O':
+        g.cell_shift(x + local_x, y + local_y, true);
+        break;
+      default:
+        std::cout << "Unexpected character in file (" << +c << "). Aborting.\n";
+        return false;
+      }
+      local_x++;
+    }
+  }
+  return true;
+}
+
+bool import_life(std::istream &i, gol::Game_of_life &g, const int x,
+                 const int y) {
+  std::string line;
+  std::string life_version;
+  std::stringstream stringstr;
+  std::vector<std::pair<int, int>> alive_cells;
+  int linenumber{0}, version{0}, min_x{0}, min_y{0};
+
+  while (i.good()) {
+    std::getline(i, line);
+    linenumber++;
+
+    if (!line.length() || trim(line) == "") {
+      continue;
+    }
+
+    if (line[0] == '#' && linenumber > 0) {
+      continue;
+    }
+
+    if (linenumber == 1) {
+      life_version = line;
+
+      // Enable when implementing support for Life 1.05
+      // version = (life_version == "#Life 1.05") ? 5 : 0;
+      version = (life_version == "#Life 1.06") ? 6 : 0;
+
+      if (!version) {
+        std::cout << "Unsupported version (" << life_version
+                  << "). Aborting.\n";
+        return false;
+      }
+      continue;
+    }
+
+    stringstr.clear();
+    stringstr.str(line);
+    int cx, cy;
+    if (!(stringstr >> cx) || !(stringstr >> cy)) return false;
+    alive_cells.emplace_back(cx, cy);
+    min_x = std::min(min_x, cx);
+    min_y = std::min(min_y, cy);
+  }
+
+  for (auto &p : alive_cells) {
+    g.cell_shift(p.first + x - min_x, p.second + y - min_y, true);
+  }
+
   return true;
 }
 

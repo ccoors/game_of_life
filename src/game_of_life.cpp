@@ -156,9 +156,14 @@ bool Game_of_life::load_pattern(const std::string filename, const int x,
   if (in.is_open()) {
     grid backup = _current_grid;
     bool ok{false};
+    std::string extension = filename.substr(filename.find_last_of(".") + 1);
 
-    if (filename.substr(filename.find_last_of(".") + 1) == "rle") {
+    if (extension == "rle") {
       ok = import::import_rle(in, *this, x, y);
+    } else if (extension == "cells") {
+      ok = import::import_cells(in, *this, x, y);
+    } else if (extension == "lif" || extension == "life") {
+      ok = import::import_life(in, *this, x, y);
     }
 
     if (!ok) {

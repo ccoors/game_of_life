@@ -5,21 +5,29 @@ namespace commands {
 std::random_device random_device;
 std::default_random_engine random_engine{random_device()};
 
+int hardware_threads = std::thread::hardware_concurrency();
+
+bool verbose_grid{true};
+int delay_ms{50};
+
 // clang-format off
 std::vector<command_structure> commands = {
-    {"?",       "?",               "?", &help,          "Print this help"},
-    {"print",   "(p)rint",         "p", &print_grid,    "Print current grid"},
-    {"clear",   "(c)lear",         "c", &clear_grid,    "Clear the grid"},
-    {"resize",  "resi(z)e n",      "z", &resize_grid,   "Set grid size to n x n and clear"},
-    {"set",     "(s)et x y",       "s", &set_cell,      "Set cell at x y alive"},
-    {"unset",   "(u)nset x y",     "u", &unset_cell,    "Set cell at x y dead"},
-    {"fill",    "(f)ill n",        "f", &fill_grid,     "Set up to n cells alive"},
-    {"threads", "(t)hreads n",     "t", &set_threads,   "Set the amount of threads"},
-    {"glider",  "(g)lider x y",    "g", &create_glider, "Place a glider at x y"},
-    {"load",    "(l)oad file x y", "l", &load_pattern,  "Load pattern from file to x y"},
-    {"run",     "(r)un n",         "r", &run,           "Run n iterations"},
-    {"step",    "st(e)p",          "e", &step,          "Run 1 iteration"},
-    {"exit",    "exit",            "",  &pexit,         "Exit"}
+  {"?",       "?",               "?", &help,          "Print this help"},
+  {"print",   "(p)rint",         "p", &print_grid,    "Print current grid"},
+  {"clear",   "(c)lear",         "c", &clear_grid,    "Clear the grid"},
+  {"resize",  "resi(z)e n",      "z", &resize_grid,   "Set grid size to n x n and clear"},
+  {"set",     "(s)et x y",       "s", &set_cell,      "Set cell at x y alive"},
+  {"unset",   "(u)nset x y",     "u", &unset_cell,    "Set cell at x y dead"},
+  {"fill",    "(f)ill n",        "f", &fill_grid,     "Set up to n cells alive"},
+  {"threads", "(t)hreads n",     "t", &set_threads,   "Set the amount of threads"},
+  {"glider",  "(g)lider x y",    "g", &create_glider, "Place a glider at x y"},
+  {"load",    "(l)oad file x y", "l", &load_pattern,  "Load pattern from file to x y"},
+  {"quiet",   "(q)uiet",         "q", &quiet,         "Disable output during running"},
+  {"verbose", "(v)erbose",       "v", &verbose,       "Enable output during running"},
+  {"delay",   "(d)elay n",       "d", &delay,         "Wait for n milliseconds after each step"},
+  {"run",     "(r)un n",         "r", &run,           "Run n iterations"},
+  {"step",    "st(e)p",          "e", &step,          "Run 1 iteration"},
+  {"exit",    "exit",            "",  &pexit,         "Exit"}
 };
 // clang-format on
 
@@ -41,6 +49,26 @@ void print_command_name(const std::string &name) {
   std::cout << name;
 }
 
+bool quiet(gol::Game_of_life &g) {
+  verbose_grid = false;
+  return true;
+}
+
+bool verbose(gol::Game_of_life &g) {
+  verbose_grid = true;
+  return true;
+}
+
+bool delay(gol::Game_of_life &g) {
+  int n;
+  if (ui::input_int(n, true, true))
+    delay_ms = n;
+  else
+    std::cout << "Invalid value.\n";
+
+  return true;
+}
+
 bool help(gol::Game_of_life &g) {
   std::cout << " === Help ===\n";
   for (auto c : commands) {
@@ -50,11 +78,11 @@ bool help(gol::Game_of_life &g) {
 
   std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n";
   std::cout << "\nCurrent the following file formats are supported:\n";
+  std::cout << " * Life 1.06 (.lif or .life)\n";
+  std::cout << " * Plaintext (.cells)\n";
   std::cout << " * RLE (.rle)\n";
-  // std::cout << " * Macrocell (.mc)\n"; // TODO
-  // std::cout << " * Plaintext (.cells)\n"; // TODO
   std::cout << "Please make sure the grid is large enough before loading.\n";
-  int hardware_threads = std::thread::hardware_concurrency();
+
   if (hardware_threads > 1) {
     std::cout << "\nUse as many threads as possible (up to " << gol::max_threads
               << ")\nif you have more than one CPU core.\nYour CPU supports "
@@ -72,6 +100,7 @@ bool print_grid(gol::Game_of_life &g) {
 
 bool clear_grid(gol::Game_of_life &g) {
   g.clear();
+  std::cout << "Grid cleared.\n";
   return true;
 }
 
@@ -172,8 +201,14 @@ bool run(gol::Game_of_life &g) {
   if (ui::input_int(n, true)) {
     for (int i = 0; i < n; i++) {
       g.step();
-      std::cout << "Step " << (i + 1) << ":\n";
-      std::cout << g << std::endl;
+      if (verbose_grid) {
+        std::cout << "Step " << (i + 1) << ":\n";
+        std::cout << g << std::endl;
+        if (delay_ms) {
+          std::chrono::milliseconds wait_for(delay_ms);
+          std::this_thread::sleep_for(wait_for);
+        }
+      }
     }
   } else {
     std::cout << "Invalid number of steps.\n";
@@ -183,7 +218,7 @@ bool run(gol::Game_of_life &g) {
 
 bool step(gol::Game_of_life &g) {
   g.step();
-  std::cout << g << std::endl;
+  if (verbose_grid) std::cout << g << std::endl;
   return true;
 }
 
