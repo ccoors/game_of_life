@@ -30,8 +30,8 @@ This is a simple Game of Life implementation in C++14.
 ### Arch Linux
     cd arch-pkgbuild
     makepkg
-    sudo pacman -U game_of_life-git-XXX.pkg.tar.xz
-Replace XXX with the actual version number and architecture.
+    sudo pacman -U game_of_life-git-X
+Replace X with the actual version number, architecture and file extension.
 
 ### Linux crosscompile for Windows
     cd tools
