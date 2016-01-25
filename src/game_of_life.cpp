@@ -123,7 +123,7 @@ void thread_helper(Game_of_life &g, int line, grid &output, const grid &old) {
   g.calculate_line(line, output, old, true);
 }
 
-void Game_of_life::step() {
+bool Game_of_life::step() {
   std::swap(_current_grid, _old_grid);
   if (_threads < 2) {
     for (int y = 0; y < _size; y++) {
@@ -148,6 +148,8 @@ void Game_of_life::step() {
       running.clear();
     }
   }
+  return !std::equal(_current_grid.begin(), _current_grid.end(),
+                     _old_grid.begin());
 }
 
 bool Game_of_life::load_pattern(const std::string filename, const int x,

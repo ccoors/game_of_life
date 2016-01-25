@@ -30,7 +30,7 @@ public:
   bool cell_shift(const int x, const int y) const;
   int threads(const int new_threads);
   int threads() const;
-  void step();
+  bool step();
 
   bool load_pattern(const std::string filename, const int x, const int y);
 

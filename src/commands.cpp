@@ -200,7 +200,12 @@ bool run(gol::Game_of_life &g) {
   int n;
   if (ui::input_int(n, true)) {
     for (int i = 0; i < n; i++) {
-      g.step();
+      if (!g.step()) {
+        std::cout << "Aborted after " << (i + 1) << " step"
+                  << (i > 0 ? "s" : "")
+                  << " because of no change comprared do previous step.\n";
+        break;
+      };
       if (verbose_grid) {
         std::cout << "Step " << (i + 1) << ":\n";
         std::cout << g << std::endl;
