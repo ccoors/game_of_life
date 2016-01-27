@@ -12,22 +12,22 @@ int delay_ms{50};
 
 // clang-format off
 std::vector<command_structure> commands = {
-  {"?",       "?",               "?", &help,          "Print this help"},
-  {"print",   "(p)rint",         "p", &print_grid,    "Print current grid"},
-  {"clear",   "(c)lear",         "c", &clear_grid,    "Clear the grid"},
-  {"resize",  "resi(z)e n",      "z", &resize_grid,   "Set grid size to n x n and clear"},
-  {"set",     "(s)et x y",       "s", &set_cell,      "Set cell at x y alive"},
-  {"unset",   "(u)nset x y",     "u", &unset_cell,    "Set cell at x y dead"},
-  {"fill",    "(f)ill n",        "f", &fill_grid,     "Set up to n cells alive"},
-  {"threads", "(t)hreads n",     "t", &set_threads,   "Set the amount of threads"},
-  {"glider",  "(g)lider x y",    "g", &create_glider, "Place a glider at x y"},
-  {"load",    "(l)oad file x y", "l", &load_pattern,  "Load pattern from file to x y"},
-  {"quiet",   "(q)uiet",         "q", &quiet,         "Disable output during running"},
-  {"verbose", "(v)erbose",       "v", &verbose,       "Enable output during running"},
-  {"delay",   "(d)elay n",       "d", &delay,         "Wait for n milliseconds after each step"},
-  {"run",     "(r)un n",         "r", &run,           "Run n iterations"},
-  {"step",    "st(e)p",          "e", &step,          "Run 1 iteration"},
-  {"exit",    "exit",            "",  &pexit,         "Exit"}
+  {"?",       "?",               "?", nullptr, &help,          "Print this help"},
+  {"print",   "(p)rint",         "p", &print_grid, nullptr,    "Print current grid"},
+  {"clear",   "(c)lear",         "c", &clear_grid, nullptr,    "Clear the grid"},
+  {"resize",  "resi(z)e n",      "z", &resize_grid, nullptr,   "Set grid size to n x n and clear"},
+  {"set",     "(s)et x y",       "s", &set_cell, nullptr,      "Set cell at x y alive"},
+  {"unset",   "(u)nset x y",     "u", &unset_cell, nullptr,    "Set cell at x y dead"},
+  {"fill",    "(f)ill n",        "f", &fill_grid, nullptr,     "Set up to n cells alive"},
+  {"threads", "(t)hreads n",     "t", &set_threads, nullptr,   "Set the amount of threads"},
+  {"glider",  "(g)lider x y",    "g", &create_glider, nullptr, "Place a glider at x y"},
+  {"load",    "(l)oad file x y", "l", &load_pattern, nullptr,  "Load pattern from file to x y"},
+  {"quiet",   "(q)uiet",         "q", nullptr, &quiet,         "Disable output during running"},
+  {"verbose", "(v)erbose",       "v", nullptr, &verbose,       "Enable output during running"},
+  {"delay",   "(d)elay n",       "d", nullptr, &delay,         "Wait for n milliseconds after each step"},
+  {"run",     "(r)un n",         "r", &run, nullptr,           "Run n iterations"},
+  {"step",    "st(e)p",          "e", &step, nullptr,          "Run 1 iteration"},
+  {"exit",    "exit",            "",  nullptr, &pexit,         "Exit"}
 };
 // clang-format on
 
@@ -36,7 +36,10 @@ constexpr int max_command_width{16};
 bool command(std::string command, gol::Game_of_life &g) {
   for (auto c : commands) {
     if (command == c.name || command == c.shortcut) {
-      return c.function(g);
+      if (c.function_g != nullptr)
+        return c.function_g(g);
+      else
+        return c.function_w();
     }
   }
 
@@ -49,27 +52,31 @@ void print_command_name(const std::string &name) {
   std::cout << name;
 }
 
-bool quiet(gol::Game_of_life &g) {
+bool quiet() {
   verbose_grid = false;
+  std::cout << "Grid output is now disabled.\n";
   return true;
 }
 
-bool verbose(gol::Game_of_life &g) {
+bool verbose() {
   verbose_grid = true;
+  std::cout << "Grid output is now enabled.\n";
   return true;
 }
 
-bool delay(gol::Game_of_life &g) {
+bool delay() {
   int n;
   if (ui::input_int(n, true, true))
     delay_ms = n;
   else
     std::cout << "Invalid value.\n";
 
+  std::cout << "Every step will now be shown for " << delay_ms
+            << " milliseconds.\n";
   return true;
 }
 
-bool help(gol::Game_of_life &g) {
+bool help() {
   std::cout << " === Help ===\n";
   for (auto c : commands) {
     print_command_name(c.help);
@@ -148,6 +155,7 @@ bool fill_grid(gol::Game_of_life &g) {
 
       g.cell(x, y, true);
     }
+    std::cout << "Grid filled with up to " << n << " alive cells.\n";
   } else {
     std::cout << "Invalid number.\n";
   }
@@ -173,6 +181,7 @@ bool create_glider(gol::Game_of_life &g) {
     g.cell(g.shift_coord(x + 2), g.shift_coord(y + 2), true);
     g.cell(g.shift_coord(x + 1), g.shift_coord(y + 2), true);
     g.cell(g.shift_coord(x), g.shift_coord(y + 2), true);
+    std::cout << "Glider placed.\n";
   } else {
     std::cout << "Invalid coordinates.\n";
   }
@@ -227,5 +236,5 @@ bool step(gol::Game_of_life &g) {
   return true;
 }
 
-bool pexit(gol::Game_of_life &g) { return false; }
+bool pexit() { return false; }
 } // namespace commands
