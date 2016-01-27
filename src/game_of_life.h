@@ -3,6 +3,8 @@
 
 #include "main.h"
 
+#include "util.h"
+
 namespace gol {
 
 typedef std::vector<bool> line;
@@ -43,8 +45,8 @@ private:
                       const bool thread_safe);
 
   friend std::ostream &operator<<(std::ostream &os, const Game_of_life &g);
-  friend void thread_helper(Game_of_life &g, int line, grid &output,
-                            const grid &old);
+  friend void thread_helper(Game_of_life &g, std::vector<int> lines,
+                            grid &output, const grid &old);
 
   int _size, _threads;
   std::mutex _grid_lock;

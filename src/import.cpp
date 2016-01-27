@@ -2,16 +2,6 @@
 
 namespace import {
 
-std::string &trim(std::string &str) {
-  str.erase(str.begin(), find_if(str.begin(), str.end(), [](char &ch) -> bool {
-              return !isspace(ch);
-            }));
-  str.erase(find_if(str.rbegin(), str.rend(), [](char &ch) -> bool {
-              return !isspace(ch);
-            }).base(), str.end());
-  return str;
-}
-
 bool next_cell(int &x, int &y, int &width, int &height) {
   x++;
   if (x > width) {
@@ -32,7 +22,7 @@ bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
   while (i.good()) {
     std::getline(i, line);
 
-    if (!line.length() || trim(line) == "" || line[0] == '#') continue;
+    if (!line.length() || util::trim(line) == "" || line[0] == '#') continue;
 
     stringstr.clear();
     stringstr.str(line);
@@ -94,7 +84,7 @@ bool import_cells(std::istream &i, gol::Game_of_life &g, const int x,
   while (i.good()) {
     std::getline(i, line);
 
-    if (!line.length() || trim(line) == "") {
+    if (!line.length() || util::trim(line) == "") {
       local_y++;
       continue;
     }
@@ -142,7 +132,7 @@ bool import_life(std::istream &i, gol::Game_of_life &g, const int x,
     std::getline(i, line);
     linenumber++;
 
-    if (!line.length() || trim(line) == "") {
+    if (!line.length() || util::trim(line) == "") {
       continue;
     }
 

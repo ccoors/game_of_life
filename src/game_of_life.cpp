@@ -119,8 +119,11 @@ void Game_of_life::calculate_line(const int line, grid &output, const grid &old,
   }
 }
 
-void thread_helper(Game_of_life &g, int line, grid &output, const grid &old) {
-  g.calculate_line(line, output, old, true);
+void thread_helper(Game_of_life &g, std::vector<int> lines, grid &output,
+                   const grid &old) {
+  for (auto &l : lines) {
+    g.calculate_line(l, output, old, true);
+  }
 }
 
 bool Game_of_life::step() {
@@ -130,23 +133,23 @@ bool Game_of_life::step() {
       calculate_line(y, _current_grid, _old_grid, false);
     }
   } else {
-    int current_line{0};
     std::vector<std::thread> running{};
-    while (current_line < _size) {
-      for (int i = 0; i < _threads; i++) {
-        running.emplace_back(thread_helper, std::ref(*this), current_line,
-                             std::ref(_current_grid), std::ref(_old_grid));
-        current_line++;
-        if (current_line >= _size) {
-          break;
-        }
-      }
+    std::map<int, std::vector<int>> to_calculate{};
 
-      for (auto &t : running) {
-        t.join();
-      }
-      running.clear();
+    for (int current_line = 0; current_line < _size; current_line++) {
+      to_calculate[util::positive_modulo(current_line, _threads)].push_back(
+          current_line);
     }
+
+    for (auto &l : to_calculate) {
+      running.emplace_back(thread_helper, std::ref(*this), std::ref(l.second),
+                           std::ref(_current_grid), std::ref(_old_grid));
+    }
+
+    for (auto &t : running) {
+      t.join();
+    }
+    running.clear();
   }
   return !std::equal(_current_grid.begin(), _current_grid.end(),
                      _old_grid.begin());

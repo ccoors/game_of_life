@@ -4,6 +4,7 @@
 #include "main.h"
 #include "game_of_life.h"
 #include "ui.h"
+#include "util.h"
 
 namespace commands {
 
