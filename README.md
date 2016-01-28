@@ -44,7 +44,6 @@ Replace X with the actual version number, architecture and file extension.
     ./build_windows_static_x{86,64}.sh
 
 ## Development
-This project relies on several optimizations done by modern compilers like
-return value optimization (RVO) and move-semantics in the C++ Standard library.
-Therefore, things like return-by-value are used in most cases to improve
-readability.
+This project relies on several optimizations done by modern compilers and
+linkers like return value optimization (RVO). Therefore, things like
+return-by-value are used in most cases to improve readability.
