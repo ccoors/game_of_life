@@ -5,6 +5,7 @@
 #include "game_of_life.h"
 #include "ui.h"
 #include "util.h"
+#include "import_export.h"
 
 namespace commands {
 
@@ -32,6 +33,7 @@ bool fill_grid(gol::Game_of_life &g);
 bool set_threads(gol::Game_of_life &g);
 bool create_glider(gol::Game_of_life &g);
 bool load_pattern(gol::Game_of_life &g);
+bool export_cells(gol::Game_of_life &g);
 bool run(gol::Game_of_life &g);
 bool step(gol::Game_of_life &g);
 

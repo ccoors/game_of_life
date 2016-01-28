@@ -22,6 +22,7 @@ std::vector<command_structure> commands = {
   {"threads", "(t)hreads n",     "t", &set_threads, nullptr,   "Set the amount of threads"},
   {"glider",  "(g)lider x y",    "g", &create_glider, nullptr, "Place a glider at x y"},
   {"load",    "(l)oad file x y", "l", &load_pattern, nullptr,  "Load pattern from file to x y"},
+  {"export",  "e(x)port file",   "x", &export_cells, nullptr,  "Export a file to cells format"},
   {"quiet",   "(q)uiet",         "q", nullptr, &quiet,         "Disable output during running"},
   {"verbose", "(v)erbose",       "v", nullptr, &verbose,       "Enable output during running"},
   {"delay",   "(d)elay n",       "d", nullptr, &delay,         "Wait for n milliseconds after each step"},
@@ -201,6 +202,21 @@ bool load_pattern(gol::Game_of_life &g) {
     std::cin.clear();
     std::cin.ignore();
     std::cout << "Invalid parameters.\n";
+  }
+  return true;
+}
+
+bool export_cells(gol::Game_of_life &g) {
+  std::string filename{""};
+
+  if (std::cin >> filename && util::file_extension(filename) == "cells") {
+    if (import_export::export_cells(filename, g)) {
+      std::cout << "Exported to file.\n";
+    } else {
+      std::cout << "File could not be written.\n";
+    }
+  } else {
+    std::cout << "Invalid filename (has to end with .cells)\n";
   }
   return true;
 }

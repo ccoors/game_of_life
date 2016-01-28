@@ -14,4 +14,8 @@ std::string &trim(std::string &str) {
   return str;
 }
 
+std::string file_extension(const std::string &filename) {
+  return filename.substr(filename.find_last_of(".") + 1);
+}
+
 } // namespace util

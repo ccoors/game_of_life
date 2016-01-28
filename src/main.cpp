@@ -1,6 +1,7 @@
 #include "main.h"
 #include "ui.h"
 #include "game_of_life.h"
+#include "import_export.h"
 
 int main() {
   std::cout << "CONVAYS GAME OF LIFE\n\n";

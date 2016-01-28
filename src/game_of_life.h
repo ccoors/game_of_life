@@ -3,8 +3,6 @@
 
 #include "main.h"
 
-#include "util.h"
-
 namespace gol {
 
 typedef std::vector<bool> line;
@@ -34,7 +32,7 @@ public:
   int threads() const;
   bool step();
 
-  bool load_pattern(const std::string filename, const int x, const int y);
+  bool load_pattern(const std::string &filename, const int x, const int y);
 
   int shift_coord(int i) const;
 

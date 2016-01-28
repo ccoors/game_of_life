@@ -6,18 +6,20 @@ This is a simple Game of Life implementation in C++14.
 ## Features
 * Square grid
 * Standard 23/3 rule
+* Needs only C++ Standard library
 * Multithreaded (up to 32 threads)
-  * Only useful for large grids (> 100 x 100)
+  * Only useful for large grids (> 1000 x 1000)
 * Supported loading file formats:
   * Run Length Encoded (.rle)
   * Plaintext (.cells)
   * Life 1.06 (.lif or .life) files
+* Supported saving file formats:
+  * Plaintext (.cells)
 
 ### Planned features
 * Non-square grid
 * Other rules
 * Support for loading Life 1.05 files
-* Saving
 
 ## Requirements
 ### Build
@@ -40,3 +42,9 @@ Replace X with the actual version number, architecture and file extension.
 ### Linux crosscompile for Windows
     cd tools
     ./build_windows_static_x{86,64}.sh
+
+## Development
+This project relies on several optimizations done by modern compilers like
+return value optimization (RVO) and move-semantics in the C++ Standard library.
+Therefore, things like return-by-value are used in most cases to improve
+readability.

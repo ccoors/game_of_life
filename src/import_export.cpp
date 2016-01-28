@@ -1,6 +1,6 @@
-#include "import.h"
+#include "import_export.h"
 
-namespace import {
+namespace import_export {
 
 bool next_cell(int &x, int &y, int &width, int &height) {
   x++;
@@ -72,6 +72,23 @@ bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
     }
   }
   return true;
+}
+
+bool export_cells(const std::string &filename, const gol::Game_of_life &g) {
+  std::ofstream file{filename};
+  if (file.is_open()) {
+    file << "!Name: Export\n";
+    int size = g.size();
+    for (int y = 0; y < size; y++) {
+      for (int x = 0; x < size; x++) {
+        file << (g.cell(x, y) ? "O" : ".");
+      }
+      file << "\n";
+    }
+    file.close();
+    return true;
+  }
+  return false;
 }
 
 bool import_cells(std::istream &i, gol::Game_of_life &g, const int x,

@@ -12,5 +12,6 @@
 #include <fstream>
 #include <sstream>
 #include <utility>
+#include <ios>
 
 #endif

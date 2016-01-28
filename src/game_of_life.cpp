@@ -1,7 +1,8 @@
 #include "game_of_life.h"
 
+#include "util.h"
 #include "ui.h"
-#include "import.h"
+#include "import_export.h"
 
 namespace gol {
 
@@ -155,20 +156,20 @@ bool Game_of_life::step() {
                      _old_grid.begin());
 }
 
-bool Game_of_life::load_pattern(const std::string filename, const int x,
+bool Game_of_life::load_pattern(const std::string &filename, const int x,
                                 const int y) {
   std::ifstream in{filename, std::ifstream::in};
   if (in.is_open()) {
     grid backup = _current_grid;
     bool ok{false};
-    std::string extension = filename.substr(filename.find_last_of(".") + 1);
+    std::string extension = util::file_extension(filename);
 
     if (extension == "rle") {
-      ok = import::import_rle(in, *this, x, y);
+      ok = import_export::import_rle(in, *this, x, y);
     } else if (extension == "cells") {
-      ok = import::import_cells(in, *this, x, y);
+      ok = import_export::import_cells(in, *this, x, y);
     } else if (extension == "lif" || extension == "life") {
-      ok = import::import_life(in, *this, x, y);
+      ok = import_export::import_life(in, *this, x, y);
     }
 
     if (!ok) {
