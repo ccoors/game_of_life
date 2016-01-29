@@ -6,12 +6,15 @@
 
 namespace gol {
 
-Game_of_life::Game_of_life() : _size{default_grid_size}, _threads{1} {
+Game_of_life::Game_of_life()
+    : _size{default_grid_size}, _threads{1}, _born{}, _stay_alive{} {
+  add_born(3);
+  add_stay_alive(2);
+  add_stay_alive(3);
   clear();
 }
 
 Game_of_life::Game_of_life(const int new_size) : Game_of_life() {
-  clear();
   size(new_size);
 }
 
@@ -29,6 +32,21 @@ int Game_of_life::size(const int new_size) {
   _size = std::max(gol::min_grid_size, new_size);
   clear();
   return _size;
+}
+
+void Game_of_life::clear_rules() {
+  _born.clear();
+  _stay_alive.clear();
+}
+
+void Game_of_life::add_born(const int n) {
+  if (n < 0 || n > 8) return;
+  _born.insert(n);
+}
+
+void Game_of_life::add_stay_alive(const int n) {
+  if (n < 0 || n > 8) return;
+  _stay_alive.insert(n);
 }
 
 bool Game_of_life::cell(const int x, const int y, const bool value) {
@@ -104,11 +122,15 @@ void Game_of_life::calculate_line(const int line, grid &output, const grid &old,
                                   const bool thread_safe) {
   for (int x = 0; x < _size; x++) {
     int n = alive_neighbors(x, line, old);
+    bool current_state{old[line][x]};
     bool new_state{false};
-    if (n == 2) {
-      new_state = old[line][x];
-    } else if (n == 3) {
-      new_state = true;
+
+    if (current_state) {
+      auto f = _stay_alive.find(n);
+      if (f != _stay_alive.end()) new_state = true;
+    } else {
+      auto f = _born.find(n);
+      if (f != _born.end()) new_state = true;
     }
 
     if (thread_safe) {

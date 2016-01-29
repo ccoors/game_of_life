@@ -16,6 +16,7 @@ std::vector<command_structure> commands = {
   {"print",   "(p)rint",         "p", &print_grid, nullptr,    "Print current grid"},
   {"clear",   "(c)lear",         "c", &clear_grid, nullptr,    "Clear the grid"},
   {"resize",  "resi(z)e n",      "z", &resize_grid, nullptr,   "Set grid size to n x n and clear"},
+  {"rules",   "rules b s",       "",  &set_rules, nullptr,     "Set game rules (Born, Stay Alive)"},
   {"set",     "(s)et x y",       "s", &set_cell, nullptr,      "Set cell at x y alive"},
   {"unset",   "(u)nset x y",     "u", &unset_cell, nullptr,    "Set cell at x y dead"},
   {"fill",    "(f)ill n",        "f", &fill_grid, nullptr,     "Set up to n cells alive"},
@@ -85,7 +86,7 @@ bool help() {
   }
 
   std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n";
-  std::cout << "\nCurrent the following file formats are supported:\n";
+  std::cout << "\nCurrent loading the following file formats are supported:\n";
   std::cout << " * Life 1.06 (.lif or .life)\n";
   std::cout << " * Plaintext (.cells)\n";
   std::cout << " * RLE (.rle)\n";
@@ -120,6 +121,27 @@ bool resize_grid(gol::Game_of_life &g) {
   } else {
     std::cout << "Invalid grid size entered.\n";
   }
+  return true;
+}
+
+bool set_rules(gol::Game_of_life &g) {
+  std::string born;
+  std::string stay_alive;
+
+  if (std::cin >> born && std::cin >> stay_alive && util::digit_string(born) &&
+      util::digit_string(stay_alive)) {
+    g.clear_rules();
+    // This looks ugly... sorry :/
+    for (char c : born) {
+      g.add_born(c - '0');
+    }
+    for (char c : stay_alive) {
+      g.add_stay_alive(c - '0');
+    }
+  } else {
+    std::cout << "Invalid rules. Rules must only contain digits.\n";
+  }
+
   return true;
 }
 

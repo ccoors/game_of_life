@@ -27,6 +27,7 @@ bool pexit();
 bool print_grid(gol::Game_of_life &g);
 bool clear_grid(gol::Game_of_life &g);
 bool resize_grid(gol::Game_of_life &g);
+bool set_rules(gol::Game_of_life &g);
 bool set_cell(gol::Game_of_life &g);
 bool unset_cell(gol::Game_of_life &g);
 bool fill_grid(gol::Game_of_life &g);

@@ -18,4 +18,11 @@ std::string file_extension(const std::string &filename) {
   return filename.substr(filename.find_last_of(".") + 1);
 }
 
+bool digit_string(const std::string &s) {
+  for (auto &c : s) {
+    if (!isdigit(c)) return false;
+  }
+  return true;
+}
+
 } // namespace util

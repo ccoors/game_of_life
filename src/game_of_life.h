@@ -23,6 +23,9 @@ public:
   bool valid_coords(const int x) const;
   int size() const;
   int size(const int new_size);
+  void clear_rules();
+  void add_born(const int n);
+  void add_stay_alive(const int n);
   void clear();
   bool cell(const int x, const int y, const bool value);
   bool cell(const int x, const int y) const;
@@ -49,6 +52,7 @@ private:
   int _size, _threads;
   std::mutex _grid_lock;
   grid _current_grid, _old_grid;
+  std::unordered_set<int> _born, _stay_alive;
 };
 }
 

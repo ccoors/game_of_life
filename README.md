@@ -18,7 +18,6 @@ This is a simple Game of Life implementation in C++14.
 
 ### Planned features
 * Non-square grid
-* Other rules
 * Support for loading Life 1.05 files
 
 ## Requirements
