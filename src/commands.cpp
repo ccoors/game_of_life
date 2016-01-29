@@ -85,8 +85,9 @@ bool help() {
     std::cout << " | " << c.description << "\n";
   }
 
-  std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n";
-  std::cout << "\nCurrent loading the following file formats are supported:\n";
+  std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n\n";
+  std::cout << "Currently the following file formats\n"
+            << "are supported for loading:\n";
   std::cout << " * Life 1.06 (.lif or .life)\n";
   std::cout << " * Plaintext (.cells)\n";
   std::cout << " * RLE (.rle)\n";
