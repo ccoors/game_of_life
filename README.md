@@ -5,7 +5,7 @@ This is a simple Game of Life implementation in C++14.
 
 ## Features
 * Square grid
-* Standard 23/3 rule
+* Any possible rule can be selected (Stay Alive/Born)
 * Needs only C++ Standard library
 * Multithreaded (up to 32 threads)
   * Only useful for large grids (> 1000 x 1000)
@@ -44,5 +44,6 @@ Replace X with the actual version number, architecture and file extension.
 
 ## Development
 This project relies on several optimizations done by modern compilers and
-linkers like return value optimization (RVO). Therefore, things like
-return-by-value are used in most cases to improve readability.
+linkers like return value optimization (RVO) and improvements in C++ like
+move semantics. Therefore, things like return-by-value are used in most
+cases to improve readability.
