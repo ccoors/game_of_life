@@ -7,31 +7,39 @@
 namespace gol {
 
 Game_of_life::Game_of_life()
-    : _size{default_grid_size}, _threads{1}, _born{}, _stay_alive{} {
+    : _width{default_grid_size}, _height{default_grid_size}, _threads{1},
+      _born{}, _stay_alive{} {
   add_born(3);
   add_stay_alive(2);
   add_stay_alive(3);
   clear();
 }
 
-Game_of_life::Game_of_life(const int new_size) : Game_of_life() {
-  size(new_size);
+Game_of_life::Game_of_life(const int width, const int height) : Game_of_life() {
+  size(width, height);
 }
 
 bool Game_of_life::valid_coords(const int x, const int y) const {
-  return (valid_coords(x) && valid_coords(y));
+  return (valid_coords_x(x) && valid_coords_y(y));
 }
 
-bool Game_of_life::valid_coords(const int x) const {
-  return (x >= 0 && x < _size);
+bool Game_of_life::valid_coords_x(const int x) const {
+  return (x >= 0 && x < _width);
 }
 
-int Game_of_life::size() const { return _size; }
+bool Game_of_life::valid_coords_y(const int y) const {
+  return (y >= 0 && y < _height);
+}
 
-int Game_of_life::size(const int new_size) {
-  _size = std::max(gol::min_grid_size, new_size);
+std::pair<int, int> Game_of_life::size() const {
+  return std::make_pair(_width, _height);
+}
+
+std::pair<int, int> Game_of_life::size(const int width, const int height) {
+  _width  = std::max(gol::min_grid_size, width);
+  _height = std::max(gol::min_grid_size, height);
   clear();
-  return _size;
+  return size();
 }
 
 void Game_of_life::clear_rules() {
@@ -67,12 +75,12 @@ bool Game_of_life::cell(const int x, const int y) const {
 }
 
 bool Game_of_life::cell_shift(const int x, const int y, const bool value) {
-  _current_grid[shift_coord(y)][shift_coord(x)] = value;
+  _current_grid[shift_coord_y(y)][shift_coord_x(x)] = value;
   return true;
 }
 
 bool Game_of_life::cell_shift(const int x, const int y) const {
-  return _current_grid[shift_coord(y)][shift_coord(x)];
+  return _current_grid[shift_coord_y(y)][shift_coord_x(x)];
 }
 
 int Game_of_life::threads(const int new_threads) {
@@ -85,22 +93,34 @@ int Game_of_life::threads() const { return _threads; }
 void Game_of_life::clear() {
   _current_grid.clear();
   _old_grid.clear();
-  for (auto i = 0; i < _size; i++) {
-    _current_grid.emplace_back(_size, false);
-    _old_grid.emplace_back(_size, false);
+  for (auto i = 0; i < _height; i++) {
+    _current_grid.emplace_back(_width, false);
+    _old_grid.emplace_back(_width, false);
   }
 }
 
-int Game_of_life::shift_coord(int i) const {
-  while (i < 0) {
-    i += _size;
+int Game_of_life::shift_coord_x(int x) const {
+  while (x < 0) {
+    x += _width;
   }
 
-  while (i >= _size) {
-    i -= _size;
+  while (x >= _width) {
+    x -= _width;
   }
 
-  return i;
+  return x;
+}
+
+int Game_of_life::shift_coord_y(int y) const {
+  while (y < 0) {
+    y += _height;
+  }
+
+  while (y >= _height) {
+    y -= _height;
+  }
+
+  return y;
 }
 
 int Game_of_life::alive_neighbors(const int x, const int y, const grid &grid) {
@@ -108,8 +128,8 @@ int Game_of_life::alive_neighbors(const int x, const int y, const grid &grid) {
   for (int delta_y = -1; delta_y < 2; delta_y++) {
     for (int delta_x = -1; delta_x < 2; delta_x++) {
       if (!(delta_y == 0 && delta_x == 0)) {
-        int ry = shift_coord(y + delta_y);
-        int rx = shift_coord(x + delta_x);
+        int ry = shift_coord_y(y + delta_y);
+        int rx = shift_coord_x(x + delta_x);
 
         n += (grid[ry][rx] ? 1 : 0);
       }
@@ -120,7 +140,7 @@ int Game_of_life::alive_neighbors(const int x, const int y, const grid &grid) {
 
 void Game_of_life::calculate_line(const int line, grid &output, const grid &old,
                                   const bool thread_safe) {
-  for (int x = 0; x < _size; x++) {
+  for (int x = 0; x < _width; x++) {
     int n = alive_neighbors(x, line, old);
     bool current_state{old[line][x]};
     bool new_state{false};
@@ -152,14 +172,14 @@ void thread_helper(Game_of_life &g, std::vector<int> lines, grid &output,
 bool Game_of_life::step() {
   std::swap(_current_grid, _old_grid);
   if (_threads < 2) {
-    for (int y = 0; y < _size; y++) {
+    for (int y = 0; y < _height; y++) {
       calculate_line(y, _current_grid, _old_grid, false);
     }
   } else {
     std::vector<std::thread> running{};
     std::map<int, std::vector<int>> to_calculate{};
 
-    for (int current_line = 0; current_line < _size; current_line++) {
+    for (int current_line = 0; current_line < _height; current_line++) {
       to_calculate[util::positive_modulo(current_line, _threads)].push_back(
           current_line);
     }
@@ -207,15 +227,15 @@ bool Game_of_life::load_pattern(const std::string &filename, const int x,
 }
 
 std::ostream &operator<<(std::ostream &os, const Game_of_life &g) {
-  os << "+" << ui::repeat(g._size, "-") << "+\n";
-  for (auto y : g._current_grid) {
+  os << "+" << ui::repeat(g._width, "-") << "+\n";
+  for (auto &y : g._current_grid) {
     os << "|";
     for (auto x : y) {
       os << (x ? alive_cell : dead_cell);
     }
     os << "|\n";
   }
-  os << "+" << ui::repeat(g._size, "-") << "+\n";
+  os << "+" << ui::repeat(g._width, "-") << "+\n";
   return os;
 }
 } // namespace gol

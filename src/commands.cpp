@@ -15,7 +15,7 @@ std::vector<command_structure> commands = {
   {"?",       "?",               "?", nullptr, &help,          "Print this help"},
   {"print",   "(p)rint",         "p", &print_grid, nullptr,    "Print current grid"},
   {"clear",   "(c)lear",         "c", &clear_grid, nullptr,    "Clear the grid"},
-  {"resize",  "resi(z)e n",      "z", &resize_grid, nullptr,   "Set grid size to n x n and clear"},
+  {"resize",  "resi(z)e w h",    "z", &resize_grid, nullptr,   "Set grid size to w x h and clear"},
   {"rules",   "rules s b",       "",  &set_rules, nullptr,     "Set game rules (Stay Alive, Born)"},
   {"set",     "(s)et x y",       "s", &set_cell, nullptr,      "Set cell at x y alive"},
   {"unset",   "(u)nset x y",     "u", &unset_cell, nullptr,    "Set cell at x y dead"},
@@ -80,10 +80,10 @@ bool delay() {
 
 bool help() {
   std::cout << " === Help ===\n";
-  for (auto c : commands) {
+  for_each(commands.begin(), commands.end(), [](auto &c) {
     print_command_name(c.help);
     std::cout << " | " << c.description << "\n";
-  }
+  });
 
   std::cout << "\nCoordinates are 0-based. (0 0) is top left corner.\n\n";
   std::cout << "Currently the following file formats\n"
@@ -115,10 +115,10 @@ bool clear_grid(gol::Game_of_life &g) {
 }
 
 bool resize_grid(gol::Game_of_life &g) {
-  int size;
-  if (ui::input_int(size, true, false)) {
-    g.size(size);
-    std::cout << "New grid size is " << g.size() << ".\n";
+  int width, height;
+  if (ui::input_int(width, true, false) && ui::input_int(height, true, false)) {
+    g.size(width, height);
+    std::cout << "New grid size is " << util::string_pair(g.size()) << ".\n";
   } else {
     std::cout << "Invalid grid size entered.\n";
   }
@@ -132,7 +132,6 @@ bool set_rules(gol::Game_of_life &g) {
   if (std::cin >> stay_alive && std::cin >> born &&
       util::digit_string(stay_alive) && util::digit_string(born)) {
     g.clear_rules();
-    // This looks ugly... sorry :/
     for (char c : stay_alive) {
       g.add_stay_alive(c - '0');
     }
@@ -172,10 +171,12 @@ bool unset_cell(gol::Game_of_life &g) {
 bool fill_grid(gol::Game_of_life &g) {
   int n;
   if (ui::input_int(n, true)) {
-    std::uniform_int_distribution<int> grid_distribution(0, g.size() - 1);
+    auto size = g.size();
+    std::uniform_int_distribution<int> grid_distribution_x{0, size.first - 1};
+    std::uniform_int_distribution<int> grid_distribution_y{0, size.second - 1};
     for (int i = 0; i < n; i++) {
-      int x = grid_distribution(random_engine);
-      int y = grid_distribution(random_engine);
+      int x = grid_distribution_x(random_engine);
+      int y = grid_distribution_y(random_engine);
 
       g.cell(x, y, true);
     }
@@ -200,11 +201,11 @@ bool set_threads(gol::Game_of_life &g) {
 bool create_glider(gol::Game_of_life &g) {
   int x, y;
   if (ui::input_int(x, false, true) && ui::input_int(y, false, true)) {
-    g.cell(g.shift_coord(x + 1), g.shift_coord(y), true);
-    g.cell(g.shift_coord(x + 2), g.shift_coord(y + 1), true);
-    g.cell(g.shift_coord(x + 2), g.shift_coord(y + 2), true);
-    g.cell(g.shift_coord(x + 1), g.shift_coord(y + 2), true);
-    g.cell(g.shift_coord(x), g.shift_coord(y + 2), true);
+    g.cell(g.shift_coord_x(x + 1), g.shift_coord_y(y), true);
+    g.cell(g.shift_coord_x(x + 2), g.shift_coord_y(y + 1), true);
+    g.cell(g.shift_coord_x(x + 2), g.shift_coord_y(y + 2), true);
+    g.cell(g.shift_coord_x(x + 1), g.shift_coord_y(y + 2), true);
+    g.cell(g.shift_coord_x(x), g.shift_coord_y(y + 2), true);
     std::cout << "Glider placed.\n";
   } else {
     std::cout << "Invalid coordinates.\n";

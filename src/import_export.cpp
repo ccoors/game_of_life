@@ -78,9 +78,9 @@ bool export_cells(const std::string &filename, const gol::Game_of_life &g) {
   std::ofstream file{filename};
   if (file.is_open()) {
     file << "!Name: Export\n";
-    int size = g.size();
-    for (int y = 0; y < size; y++) {
-      for (int x = 0; x < size; x++) {
+    auto size = g.size();
+    for (int y = 0; y < size.first; y++) {
+      for (int x = 0; x < size.second; x++) {
         file << (g.cell(x, y) ? "O" : ".");
       }
       file << "\n";

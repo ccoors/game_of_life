@@ -4,7 +4,7 @@
 This is a simple Game of Life implementation in C++14.
 
 ## Features
-* Square grid
+* 2D grid
 * Any possible rule can be selected (Stay Alive/Born)
 * Needs only C++ Standard library
 * Multithreaded (up to 32 threads)
@@ -16,10 +16,6 @@ This is a simple Game of Life implementation in C++14.
 * Supported saving file formats:
   * Plaintext (.cells)
 
-### Planned features
-* Non-square grid
-* Support for loading Life 1.05 files
-
 ## Requirements
 ### Build
 * CMake (3.1 or later)
@@ -29,7 +25,7 @@ This is a simple Game of Life implementation in C++14.
 ### Generic
     mkdir build
     cd build
-    cmake ..
+    cmake -DCMAKE_BUILD_TYPE=Release ..
     make
 
 ### Arch Linux

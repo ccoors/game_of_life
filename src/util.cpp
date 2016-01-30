@@ -25,4 +25,8 @@ bool digit_string(const std::string &s) {
   return true;
 }
 
+std::string string_pair(const std::pair<int, int> t) {
+  return std::to_string(t.first) + " x " + std::to_string(t.second);
+}
+
 } // namespace util

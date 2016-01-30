@@ -4,9 +4,9 @@
 #include "import_export.h"
 
 int main() {
-  std::cout << "CONVAYS GAME OF LIFE\n\n";
+  std::cout << "Conway's Game of Life\n";
 
-  gol::Game_of_life g{20};
+  gol::Game_of_life g{20, 20};
   std::cout << g;
 
   while (ui::command_prompt(g)) {

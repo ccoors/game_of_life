@@ -17,12 +17,13 @@ constexpr int max_threads{32};
 class Game_of_life {
 public:
   Game_of_life();
-  Game_of_life(const int new_size);
+  Game_of_life(const int width, const int height);
 
   bool valid_coords(const int x, const int y) const;
-  bool valid_coords(const int x) const;
-  int size() const;
-  int size(const int new_size);
+  bool valid_coords_x(const int x) const;
+  bool valid_coords_y(const int y) const;
+  std::pair<int, int> size() const;
+  std::pair<int, int> size(const int width, const int height);
   void clear_rules();
   void add_born(const int n);
   void add_stay_alive(const int n);
@@ -37,7 +38,8 @@ public:
 
   bool load_pattern(const std::string &filename, const int x, const int y);
 
-  int shift_coord(int i) const;
+  int shift_coord_x(int x) const;
+  int shift_coord_y(int y) const;
 
 private:
   Game_of_life(const Game_of_life &g);
@@ -49,7 +51,7 @@ private:
   friend void thread_helper(Game_of_life &g, std::vector<int> lines,
                             grid &output, const grid &old);
 
-  int _size, _threads;
+  int _width, _height, _threads;
   std::mutex _grid_lock;
   grid _current_grid, _old_grid;
   std::unordered_set<int> _born, _stay_alive;
