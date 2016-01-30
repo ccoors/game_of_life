@@ -2,8 +2,8 @@
 
 _pkgname=game_of_life
 pkgname=$_pkgname-git
-pkgver=v0.2
-pkgrel=2
+pkgver=v0.3
+pkgrel=1
 pkgdesc="A simple Game of Life implementation"
 arch=('i686' 'x86_64')
 url="https://github.com/ccoors/game_of_life"
