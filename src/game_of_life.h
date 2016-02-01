@@ -42,7 +42,8 @@ public:
   int shift_coord_y(int y) const;
 
 private:
-  Game_of_life(const Game_of_life &g);
+  Game_of_life(const Game_of_life &g) = delete;
+
   int alive_neighbors(const int x, const int y, const grid &grid);
   void calculate_line(const int line, grid &output, const grid &old,
                       const bool thread_safe);

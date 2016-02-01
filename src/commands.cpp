@@ -138,6 +138,7 @@ bool set_rules(gol::Game_of_life &g) {
     for (char c : born) {
       g.add_born(c - '0');
     }
+    std::cout << "Set rules to B" << born << "/S" << stay_alive << ".\n";
   } else {
     std::cout << "Invalid rules. Rules must only contain digits.\n";
   }

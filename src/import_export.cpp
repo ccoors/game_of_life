@@ -12,9 +12,34 @@ bool next_cell(int &x, int &y, int &width, int &height) {
   return true;
 }
 
+std::pair<std::string, std::string> get_rules(const std::string &s) {
+  std::string born{}, stay_alive{};
+
+  try {
+    born       = s.substr(0, s.find_first_of("/"));
+    stay_alive = s.substr(s.find_first_of("/") + 1);
+
+    if (stay_alive[0] == 'B' && born[0] == 'S') std::swap(stay_alive, born);
+    born = born.substr(1);
+    stay_alive = stay_alive.substr(1);
+  } catch (const std::out_of_range &e) {
+    throw util::No_rule_exception{};
+  }
+
+  util::trim(born);
+  util::trim(stay_alive);
+
+
+  if (!util::digit_string(born) || !util::digit_string(stay_alive)) {
+    throw util::No_rule_exception{};
+  }
+
+  return std::make_pair(born, stay_alive);
+}
+
 bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
                 const int y) {
-  std::string line, xs, ys, equals[2], comma;
+  std::string line, xs, ys, equals[3], comma[2], rule, rulestring;
   std::stringstream stringstr;
   int width{0}, height{0}, local_x{0}, local_y{0}, values[2];
   bool data{false};
@@ -63,12 +88,34 @@ bool import_rle(std::istream &i, gol::Game_of_life &g, const int x,
     }
 
     if (!data && stringstr >> xs && stringstr >> equals[0] &&
-        stringstr >> values[0] && stringstr >> comma && stringstr >> ys &&
+        stringstr >> values[0] && stringstr >> comma[0] && stringstr >> ys &&
         stringstr >> equals[1] && stringstr >> values[1] && xs == "x" &&
-        equals[0] == "=" && comma == "," && ys == "y" && equals[1] == "=") {
+        equals[0] == "=" && comma[0] == "," && ys == "y" && equals[1] == "=") {
       width  = values[0];
       height = values[1];
       data   = true;
+
+      if (stringstr >> comma[1] && stringstr >> rule &&
+          stringstr >> equals[2] && stringstr >> rulestring &&
+          comma[1] == "," && rule == "rule" && equals[2] == "=") {
+        std::cout << "Rule definition found in file.\n";
+        try {
+          auto pair = get_rules(rulestring);
+          g.clear_rules();
+          for (char c : pair.first) {
+            g.add_born(c - '0');
+          }
+          for (char c : pair.second) {
+            g.add_stay_alive(c - '0');
+          }
+          std::cout << "Rules changed to B" << pair.first << "/S" << pair.second
+                    << ".\n";
+        } catch (const util::No_rule_exception &e) {
+          std::cout << "WARNING: Invalid rules defined in file. Ignoring.\n";
+        }
+      } else {
+        std::cout << "WARNING: No rule definition in file.\n";
+      }
     }
   }
   return true;

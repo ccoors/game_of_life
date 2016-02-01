@@ -5,6 +5,8 @@
 
 namespace util {
 
+struct No_rule_exception {};
+
 int positive_modulo(int i, int n);
 std::string &trim(std::string &str);
 std::string file_extension(const std::string &filename);
