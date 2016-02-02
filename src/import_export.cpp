@@ -20,7 +20,7 @@ std::pair<std::string, std::string> get_rules(const std::string &s) {
     stay_alive = s.substr(s.find_first_of("/") + 1);
 
     if (stay_alive[0] == 'B' && born[0] == 'S') std::swap(stay_alive, born);
-    born = born.substr(1);
+    born       = born.substr(1);
     stay_alive = stay_alive.substr(1);
   } catch (const std::out_of_range &e) {
     throw util::No_rule_exception{};
@@ -28,7 +28,6 @@ std::pair<std::string, std::string> get_rules(const std::string &s) {
 
   util::trim(born);
   util::trim(stay_alive);
-
 
   if (!util::digit_string(born) || !util::digit_string(stay_alive)) {
     throw util::No_rule_exception{};
