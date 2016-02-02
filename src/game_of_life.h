@@ -11,12 +11,13 @@ typedef std::vector<line> grid;
 constexpr auto dead_cell  = " ";
 constexpr auto alive_cell = "*";
 constexpr int min_grid_size{4};
-constexpr int default_grid_size{10};
+constexpr int default_grid_size{20};
 constexpr int max_threads{32};
 
 class Game_of_life {
 public:
   Game_of_life();
+  Game_of_life(const int edge_length);
   Game_of_life(const int width, const int height);
 
   bool valid_coords(const int x, const int y) const;

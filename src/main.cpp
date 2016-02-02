@@ -7,7 +7,7 @@ int main() {
   std::cout << "Conway's Game of Life\n";
 
   try {
-    gol::Game_of_life g{20, 20};
+    gol::Game_of_life g{20};
     std::cout << g;
 
     while (ui::command_prompt(g)) {

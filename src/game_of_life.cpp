@@ -15,6 +15,10 @@ Game_of_life::Game_of_life()
   clear();
 }
 
+Game_of_life::Game_of_life(const int edge_length) : Game_of_life() {
+  size(edge_length, edge_length);
+}
+
 Game_of_life::Game_of_life(const int width, const int height) : Game_of_life() {
   size(width, height);
 }
