@@ -8,7 +8,7 @@ This is a simple Game of Life implementation in C++14.
 * Any possible rule can be selected (Stay Alive/Born)
 * Needs only C++ Standard library
 * Multithreaded (up to 32 threads)
-  * Only useful for large grids (> 1000 x 1000)
+  * Only useful for large grids (height > 1000)
 * Supported loading file formats:
   * Run Length Encoded (.rle)
   * Plaintext (.cells)
